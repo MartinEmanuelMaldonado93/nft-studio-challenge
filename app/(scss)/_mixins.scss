@@ -1,0 +1,28 @@
+/* Scrollbar Generator */
+@mixin createScrollByID($element, $width, $color) {
+	@if not color.is-valid($color) {
+		@error "Invalid CSS color type.";
+	}
+	@if not math.is-unitless($width) {
+		@error "Invalid parameter. Try to write only css units.";
+	}
+
+	#{$element}::-webkit-scrollbar {
+		width: $width, 10px;
+		transition: all 1s ease-out;
+	}
+	#{$element}::-webkit-scrollbar-track {
+		background-color: $color, black;
+	}
+	#{$element}::-webkit-scrollbar-thumb {
+		box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 0.3);
+		border-radius: 6px;
+		background-color: rgb(77, 76, 76);
+	}
+}
+
+/* example 
+body {
+  @include createScroll('body');
+}
+*/

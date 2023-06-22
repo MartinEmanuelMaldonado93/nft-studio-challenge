@@ -1,0 +1,22 @@
+@use "sass:math";
+// Utils only have functions 
+
+@function pxToEm($pixels) {
+
+  /*if is writted something like "30px"❌  "30" ✅ */
+  @if not math.is-unitless($pixels) {
+    @error "Invalid parameter. Try to write only numbers";
+  }
+
+  @return math.div($pixels, 16)+em;
+}
+
+@function pxToRem($pixels) {
+
+  /*if it's not a single number*/
+  @if not math.is-unitless($pixels) {
+    @error "Invalid parameter. Try to write only numbers";
+  }
+
+  @return math.div($pixels, 16)+rem;
+}
