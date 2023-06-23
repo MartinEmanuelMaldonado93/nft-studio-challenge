@@ -1,41 +1,24 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import {
-	DoubleSide,
+	Color,
 	Group,
-	Mesh,
-	MeshStandardMaterial,
-	ShaderMaterial,
 	TextureLoader,
 	Vector3,
 } from "three";
-import { useControls } from "leva";
-import { Html, Image, Plane, useScroll } from "@react-three/drei";
+import { useScroll } from "@react-three/drei";
 import useSWR, { useSWRConfig } from "swr";
 import { Artwork_SR } from "./(types)/types";
 import { artwork_data } from "./(constants)/data";
 import style from "./container.module.scss";
-import {
-	DepthOfField,
-	EffectComposer,
-	Vignette,
-} from "@react-three/postprocessing";
-import { generateRandomPositions } from "./(helpers)";
-
-const AMOUNT_PHOTOS = 20;
-
-const photos_jpg = artwork_data.filter((photo) => photo.image.endsWith(".jpg"));
-
-const randomPos = generateRandomPositions({
-	// count: photos_jpg.length,
-	count: AMOUNT_PHOTOS,
-	rangeX: 4.5,
-	rangeY: 1.5,
-	rangeZ: 6,
-});
+import { motion } from "framer-motion-3d";
+import { randomPos } from "./(helpers)";
 
 export default function ContainerImages() {
+	const groupRef = useRef<Group>(null!);
+	const scroll = useScroll();
+	const [img, setImg] = useState<Artwork_SR[]>();
 	// const { data, error, isLoading } = useSWR("artists", () =>
 	// 	fetch(
 	// 		"https://most-expensive-nft-artworks.p.rapidapi.com/artworks?page=1&sort=usd_price",
@@ -52,14 +35,11 @@ export default function ContainerImages() {
 
 	// useEffect(() => {
 	// 	(async () => {
-	// 		const imgs: Artwork_sr[] = await data?.json();
+	// 		const imgs: Artwork_SR[] = await data?.json();
+	// 		img && setImg(img);
 	// 		console.log(imgs);
 	// 	})();
 	// }, [data]);
-
-	// const featured = artwork_data.slice(0, AMOUNT_PHOTOS);
-	const groupRef = useRef<Group>(null!);
-	const scroll = useScroll();
 
 	useFrame((state, delta) => {
 		if (groupRef.current) {
@@ -86,10 +66,22 @@ export default function ContainerImages() {
 
 function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
 	const colorMap = useLoader(TextureLoader, img_url);
+	const [isHovered, setHovered] = useState(false);
+	const transparentColor = new Color(0xffffff);
+	transparentColor.set(transparentColor.getHex() + "00"); // '00' para el canal alfa a 0 (transparente)
+
 	return (
-		<mesh position={pos}>
+		<motion.mesh
+			position={pos}
+			onPointerOver={() => setHovered(true)}
+			onPointerOut={() => setHovered(false)}
+			whileTap={{ scale: 1.2 }}
+		>
 			<planeBufferGeometry args={[0.6, 1, 1]} />
-			<meshBasicMaterial map={colorMap} />
-		</mesh>
+			<motion.meshBasicMaterial
+				map={colorMap}
+				color={isHovered ? "hotpink" : transparentColor}
+			/>
+		</motion.mesh>
 	);
 }

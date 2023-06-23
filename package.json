@@ -20,6 +20,7 @@
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.6",
     "framer-motion": "^10.12.16",
+    "framer-motion-3d": "^10.12.16",
     "leva": "^0.9.35",
     "next": "13.4.6",
     "react": "18.2.0",

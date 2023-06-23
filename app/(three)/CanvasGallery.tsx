@@ -19,14 +19,12 @@ export default function CanvasGallery() {
 			camera={{ far: 500, fov: 80, position: [0, 0.5, 4] }}
 		>
 			<ambientLight intensity={0.1} />
-			{/* <fog color={"black"} near={1} far={2} /> */}
 			<ScrollControls infinite>
 				<Scroll>
 					<Corridor />
 					<ContainerImages />
 				</Scroll>
 			</ScrollControls>
-			
 			{/** If PerfMon detects a low framerate it will switch back to harsh shadows */}
 			{/* <PerformanceMonitor onDecline={() => enable(false)} /> */}
 			{/* <OrbitControls /> */}

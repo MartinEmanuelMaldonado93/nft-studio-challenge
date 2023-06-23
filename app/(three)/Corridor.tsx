@@ -1,19 +1,31 @@
 "use client";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
 import {
+	Object3DNode,
+	ShaderMaterialProps,
+	extend,
+	useFrame,
+} from "@react-three/fiber";
+import {
+	Color,
 	DoubleSide,
 	Group,
+	IUniform,
 	Mesh,
 	MeshStandardMaterial,
 	ShaderMaterial,
+	Vector3,
 } from "three";
 import { useControls } from "leva";
-import { OrbitControls, useScroll } from "@react-three/drei";
+import { OrbitControls, shaderMaterial, useScroll } from "@react-three/drei";
 import ContainerImages from "./ContainerImages";
+import { PlaneShaderMaterial } from "./PlaneShaderMaterial";
+
+extend({ PlaneShaderMaterial });
 
 export function Corridor() {
 	const groupRef = useRef<Group>(null!);
+	const shaderRef = useRef<any>(null!);
 	const data = useScroll();
 
 	useFrame((state, delta) => {
@@ -21,6 +33,9 @@ export function Corridor() {
 			const offset = data.offset.toFixed(2);
 			const prev = groupRef.current.position.z;
 			groupRef.current.position.setZ(Number(offset));
+		}
+		if (shaderRef.current) {
+			shaderRef.current.uTime = state.clock.elapsedTime;
 		}
 	});
 
@@ -43,34 +58,21 @@ export function Corridor() {
 		return () => data.el.removeEventListener("scroll", Scroll);
 	}, []);
 
-	// const { position } = useControls({
-	// 	position: [0, 0, 0],
-	// });
-
-	const material = new ShaderMaterial({
-		vertexShader: `
-			varying vec2 vUv;
-			void main() {
-				vUv = uv;//texture
-				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-			}
-		`,
-		fragmentShader: `
-			varying vec2 vUv;
-
-			void main() {
-				vec2 grid = fract( vUv * 15.0 );
-				vec3 color = vec3( 0.6, 0.8, 0.8 );
-
-				// from 0 to 1
-				if (grid.x < 0.1 || grid.x > 0.9 
-				|| grid.y < 0.1 || grid.y > 0.9) {
-					color = vec3(0.1, 0.7, 0.02);
-				}
-				gl_FragColor = vec4(color, 0.7);
-			}
-		`,
+	const stripesControls = useControls("stripes", {
+		alpha: {
+			min: 0,
+			max: 1,
+			value: 0.5,
+		},
+		multiplier: {
+			min: 1,
+			max: 142,
+			value: 42,
+		},
+		colorA: "#48a11d",
+		colorB: "#82f55c",
 	});
+
 	const largeBottomTop = 6;
 	const largeSides = 16;
 
@@ -78,40 +80,59 @@ export function Corridor() {
 		<>
 			<group ref={groupRef}>
 				{/* bottom */}
-				<mesh
-					material={material}
-					position={[0, -1.5, 0]}
-					rotation={[-(Math.PI / 2), 0, 0]}
-				>
+				<mesh position={[0, -1.5, 0]} rotation={[-(Math.PI / 2), 0, 0]}>
 					<planeBufferGeometry args={[largeBottomTop, largeSides, 3]} />
+					<planeShaderMaterial
+						//@ts-ignore
+						uAlpha={stripesControls.alpha}
+						uMultiplier={stripesControls.multiplier}
+						uColorA={stripesControls.colorA}
+						uColorB={stripesControls.colorB}
+					/>
 				</mesh>
 				{/* top */}
-				<mesh
-					material={material}
-					position={[0, 1.5, 0]}
-					rotation={[Math.PI / 2, 0, 0]}
-				>
+				<mesh position={[0, 1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+					<planeShaderMaterial
+						//@ts-ignore
+						uAlpha={stripesControls.alpha}
+						uMultiplier={stripesControls.multiplier}
+						uColorA={stripesControls.colorA}
+						uColorB={stripesControls.colorB}
+					/>
 					<planeBufferGeometry args={[largeBottomTop, largeSides, 3]} />
 				</mesh>
 				{/* left */}
-				<mesh
-					material={material}
-					rotation={[0, Math.PI / 2, 0]}
-					position={[-3.0, 0, 0]}
-				>
+				<mesh rotation={[0, Math.PI / 2, 0]} position={[-3.0, 0, 0]}>
+					<planeShaderMaterial
+						//@ts-ignore
+						uAlpha={stripesControls.alpha}
+						uMultiplier={stripesControls.multiplier}
+						uColorA={stripesControls.colorA}
+						uColorB={stripesControls.colorB}
+					/>
 					<planeBufferGeometry args={[largeSides, 3, 3]} />
 				</mesh>
 				{/* right */}
-				<mesh
-					material={material}
-					rotation={[0, -(Math.PI / 2), 0]}
-					position={[3, 0, 0]}
-				>
+				<mesh rotation={[0, -(Math.PI / 2), 0]} position={[3, 0, 0]}>
+					<planeShaderMaterial
+						//@ts-ignore
+						uAlpha={stripesControls.alpha}
+						uMultiplier={stripesControls.multiplier}
+						uColorA={stripesControls.colorA}
+						uColorB={stripesControls.colorB}
+					/>
 					<planeBufferGeometry args={[largeSides, 3, 3]} />
 				</mesh>
 			</group>
 			{/* background - fixed */}
-			<mesh material={material} rotation={[0, 0, 0]} position={[0, 0, -4]}>
+			<mesh rotation={[0, 0, 0]} position={[0, 0, -4]}>
+				<planeShaderMaterial
+					//@ts-ignore
+					uAlpha={stripesControls.alpha}
+					uMultiplier={stripesControls.multiplier}
+					uColorA={stripesControls.colorA}
+					uColorB={stripesControls.colorB}
+				/>
 				<planeBufferGeometry args={[6, 3, 3]} />
 			</mesh>
 			{/* <OrbitControls /> */}

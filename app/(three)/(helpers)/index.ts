@@ -1,6 +1,16 @@
 import { Vector3 } from "three";
 
-export function generateRandomPositions({
+
+const AMOUNT_PHOTOS = 20;
+export const randomPos = generateRandomPositions({
+	count: AMOUNT_PHOTOS,
+	rangeX: 4.5,
+	rangeY: 1.5,
+	rangeZ: 6,
+});
+
+
+function generateRandomPositions({
 	count,
 	rangeX,
 	rangeY,
