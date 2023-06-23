@@ -1,6 +1,6 @@
 Code challenge of nft studios 2023
 
-Stack utilizado 🧰
+Stack 🧰
 - React & Next.js 13.4
 - TypeScript
 - Sass / Scss
