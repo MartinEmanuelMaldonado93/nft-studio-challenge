@@ -1,7 +1,7 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { Color, Group, TextureLoader, Vector3 } from "three";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
+import { Color, Group, Mesh, TextureLoader, Vector3 } from "three";
 import { useScroll } from "@react-three/drei";
 import useSWR, { useSWRConfig } from "swr";
 import { Artwork_SR } from "./(types)/types";
@@ -60,6 +60,7 @@ export default function ContainerImages() {
 }
 
 function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
+	const meshRef = useRef<MeshProps>(null!);
 	const colorMap = useLoader(TextureLoader, img_url);
 	const [isHovered, setHovered] = useState(false);
 	const transparentColor = new Color(0xffffff);
@@ -67,18 +68,20 @@ function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
 
 	return (
 		<motion.mesh
+			ref={meshRef}
 			position={pos}
 			rotation={[0, 0, pos.x < 0 ? 0.03 : -0.05]}
 			onPointerOver={() => setHovered(true)}
 			onPointerOut={() => setHovered(false)}
 			whileTap={{ scale: 1.2 }}
+			whileHover={{rotateZ: 0}}
 			transition={{ damping: 4 }}
 		>
 			<planeBufferGeometry args={[0.6, 1, 1]} />
 			<motion.meshBasicMaterial
 				map={colorMap}
 				color={isHovered ? "hotpink" : transparentColor}
-				transition={{stiffness: 50}}
+				transition={{ stiffness: 50 }}
 			/>
 		</motion.mesh>
 	);
