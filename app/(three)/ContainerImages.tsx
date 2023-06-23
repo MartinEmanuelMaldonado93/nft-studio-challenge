@@ -2,13 +2,14 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { Color, Group, TextureLoader, Vector3 } from "three";
-import { useScroll } from "@react-three/drei";
+import { useScroll, FaceLandmarker, FaceControls } from "@react-three/drei";
 import useSWR, { useSWRConfig } from "swr";
 import { Artwork_SR } from "./(types)/types";
 import { artwork_data } from "./(constants)/data";
 import style from "./container.module.scss";
 import { motion } from "framer-motion-3d";
 import { randomPos } from "./(helpers)";
+import { useControls } from "leva";
 
 export default function ContainerImages() {
 	const containerRef = useRef<Group>(null!);
@@ -46,16 +47,28 @@ export default function ContainerImages() {
 		}
 	});
 
+	const faceCtrl = useControls({
+		webCam: false,
+	});
+	
 	return (
-		<group ref={containerRef}>
-			{randomPos.map((pos, i) => (
-				<PlaneImage
-					key={Math.random().toString()}
-					img_url="/nft.jpg"
-					pos={pos}
-				/>
-			))}
-		</group>
+		<FaceLandmarker>
+			<group ref={containerRef}>
+				{randomPos.map((pos, i) => (
+					<PlaneImage
+						key={Math.random().toString()}
+						img_url="/nft.jpg"
+						pos={pos}
+					/>
+				))}
+			</group>
+			<FaceControls
+				webcam={faceCtrl.webCam}
+				// autostart={false}
+				// offset={false}
+				offsetScalar={120}
+			/>
+		</FaceLandmarker>
 	);
 }
 
