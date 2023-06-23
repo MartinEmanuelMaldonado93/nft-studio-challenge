@@ -8,12 +8,21 @@ import { Artwork_SR } from "./(types)/types";
 import { artwork_data } from "./(constants)/data";
 import style from "./container.module.scss";
 import { motion } from "framer-motion-3d";
-import { randomPos } from "./(helpers)";
+import { getRandomPosition, randomPos } from "./(helpers)";
 
 export default function ContainerImages() {
 	const containerRef = useRef<Group>(null!);
 	const scroll = useScroll();
 	const [img, setImg] = useState<Artwork_SR[]>();
+	const static_img = [
+		"nft0.jpg",
+		"nft1.jpg",
+		"nft2.jpg",
+		"nft3.jpg",
+		"nft4.jpg",
+		"nft5.jpg",
+		"nft6.jpg",
+	];
 	// const { data, error, isLoading } = useSWR("artists", () =>
 	// 	fetch(
 	// 		"https://most-expensive-nft-artworks.p.rapidapi.com/artworks?page=1&sort=usd_price",
@@ -48,10 +57,17 @@ export default function ContainerImages() {
 
 	return (
 		<group ref={containerRef}>
+			{static_img.map((url, i) => (
+				<PlaneImage
+					key={Math.random().toString()}
+					img_url={url}
+					pos={getRandomPosition()}
+				/>
+			))}
 			{randomPos.map((pos, i) => (
 				<PlaneImage
 					key={Math.random().toString()}
-					img_url="/nft.jpg"
+					img_url="/nft0.jpg"
 					pos={pos}
 				/>
 			))}
@@ -74,7 +90,7 @@ function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
 			onPointerOver={() => setHovered(true)}
 			onPointerOut={() => setHovered(false)}
 			whileTap={{ scale: 1.2 }}
-			whileHover={{rotateZ: 0}}
+			whileHover={{ rotateZ: 0 }}
 			transition={{ damping: 4 }}
 		>
 			<planeBufferGeometry args={[0.6, 1, 1]} />
