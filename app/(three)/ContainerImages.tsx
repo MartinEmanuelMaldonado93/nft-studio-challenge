@@ -1,8 +1,8 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { Color, Group, TextureLoader, Vector3 } from "three";
-import { useScroll, FaceLandmarker, FaceControls } from "@react-three/drei";
+import { useScroll, FaceLandmarker, FaceControls, FaceControlsApi } from "@react-three/drei";
 import useSWR, { useSWRConfig } from "swr";
 import { Artwork_SR } from "./(types)/types";
 import { artwork_data } from "./(constants)/data";
@@ -15,6 +15,8 @@ export default function ContainerImages() {
 	const containerRef = useRef<Group>(null!);
 	const scroll = useScroll();
 	const [img, setImg] = useState<Artwork_SR[]>();
+	const faceRef = useRef<FaceControlsApi>(null!);
+
 	// const { data, error, isLoading } = useSWR("artists", () =>
 	// 	fetch(
 	// 		"https://most-expensive-nft-artworks.p.rapidapi.com/artworks?page=1&sort=usd_price",
@@ -46,11 +48,18 @@ export default function ContainerImages() {
 			}
 		}
 	});
-
+	
+	useEffect(()=>{
+		if(faceRef.current){
+			// faceRef.current.computeTarget
+		}
+	},[]);
+	
 	const faceCtrl = useControls({
 		webCam: false,
+		offsetScalar: 120,
 	});
-	
+
 	return (
 		<FaceLandmarker>
 			<group ref={containerRef}>
@@ -63,6 +72,7 @@ export default function ContainerImages() {
 				))}
 			</group>
 			<FaceControls
+				ref={faceRef}
 				webcam={faceCtrl.webCam}
 				// autostart={false}
 				// offset={false}
@@ -91,7 +101,7 @@ function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
 			<motion.meshBasicMaterial
 				map={colorMap}
 				color={isHovered ? "hotpink" : transparentColor}
-				transition={{stiffness: 50}}
+				transition={{ stiffness: 50 }}
 			/>
 		</motion.mesh>
 	);
