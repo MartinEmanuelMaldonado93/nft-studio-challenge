@@ -1,12 +1,7 @@
 "use client";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import {
-	Color,
-	Group,
-	TextureLoader,
-	Vector3,
-} from "three";
+import { Color, Group, TextureLoader, Vector3 } from "three";
 import { useScroll } from "@react-three/drei";
 import useSWR, { useSWRConfig } from "swr";
 import { Artwork_SR } from "./(types)/types";
@@ -16,7 +11,7 @@ import { motion } from "framer-motion-3d";
 import { randomPos } from "./(helpers)";
 
 export default function ContainerImages() {
-	const groupRef = useRef<Group>(null!);
+	const containerRef = useRef<Group>(null!);
 	const scroll = useScroll();
 	const [img, setImg] = useState<Artwork_SR[]>();
 	// const { data, error, isLoading } = useSWR("artists", () =>
@@ -42,17 +37,17 @@ export default function ContainerImages() {
 	// }, [data]);
 
 	useFrame((state, delta) => {
-		if (groupRef.current) {
-			const prev = groupRef.current.position.z;
-			groupRef.current.position.setZ(prev + scroll.delta);
+		if (containerRef.current) {
+			const prev = containerRef.current.position.z;
+			containerRef.current.position.setZ(prev + scroll.delta);
 			if (prev > 5) {
-				groupRef.current.position.setZ(1);
+				containerRef.current.position.setZ(1);
 			}
 		}
 	});
 
 	return (
-		<group ref={groupRef}>
+		<group ref={containerRef}>
 			{randomPos.map((pos, i) => (
 				<PlaneImage
 					key={Math.random().toString()}
@@ -73,14 +68,17 @@ function PlaneImage({ img_url, pos }: { img_url: string; pos: Vector3 }) {
 	return (
 		<motion.mesh
 			position={pos}
+			rotation={[0, 0, pos.x < 0 ? 0.03 : -0.05]}
 			onPointerOver={() => setHovered(true)}
 			onPointerOut={() => setHovered(false)}
 			whileTap={{ scale: 1.2 }}
+			transition={{ damping: 4 }}
 		>
 			<planeBufferGeometry args={[0.6, 1, 1]} />
 			<motion.meshBasicMaterial
 				map={colorMap}
 				color={isHovered ? "hotpink" : transparentColor}
+				transition={{stiffness: 50}}
 			/>
 		</motion.mesh>
 	);

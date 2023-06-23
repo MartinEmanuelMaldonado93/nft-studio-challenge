@@ -17,22 +17,27 @@ import {
 	Vector3,
 } from "three";
 import { useControls } from "leva";
-import { OrbitControls, shaderMaterial, useScroll } from "@react-three/drei";
+import {
+	OrbitControls,
+	Sparkles,
+	shaderMaterial,
+	useScroll,
+} from "@react-three/drei";
 import ContainerImages from "./ContainerImages";
 import { PlaneShaderMaterial } from "./PlaneShaderMaterial";
 
 extend({ PlaneShaderMaterial });
 
 export function Corridor() {
-	const groupRef = useRef<Group>(null!);
+	const corridorRef = useRef<Group>(null!);
 	const shaderRef = useRef<any>(null!);
 	const data = useScroll();
 
 	useFrame((state, delta) => {
-		if (groupRef.current) {
+		if (corridorRef.current) {
 			const offset = data.offset.toFixed(2);
-			const prev = groupRef.current.position.z;
-			groupRef.current.position.setZ(Number(offset));
+			const prev = corridorRef.current.position.z;
+			corridorRef.current.position.setZ(Number(offset));
 		}
 		if (shaderRef.current) {
 			shaderRef.current.uTime = state.clock.elapsedTime;
@@ -72,13 +77,20 @@ export function Corridor() {
 		colorA: "#48a11d",
 		colorB: "#82f55c",
 	});
-
+	const sparklesControls = useControls("sparkles", {
+		count: 100,
+		speed: 1,
+		opacity: 1,
+		color: "white",
+		scale: [3, 2, 5],
+		position: [0, 0, 1],
+	});
 	const largeBottomTop = 6;
 	const largeSides = 16;
 
 	return (
 		<>
-			<group ref={groupRef}>
+			<group ref={corridorRef}>
 				{/* bottom */}
 				<mesh position={[0, -1.5, 0]} rotation={[-(Math.PI / 2), 0, 0]}>
 					<planeBufferGeometry args={[largeBottomTop, largeSides, 3]} />
@@ -135,7 +147,13 @@ export function Corridor() {
 				/>
 				<planeBufferGeometry args={[6, 3, 3]} />
 			</mesh>
-			{/* <OrbitControls /> */}
+			<Sparkles
+				color={sparklesControls.color}
+				speed={sparklesControls.speed}
+				count={sparklesControls.count}
+				scale={[3, 2, 5]}
+				position={[0, 0, 1]}
+			/>
 		</>
 	);
 }
