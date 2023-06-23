@@ -10,7 +10,13 @@ Stack utilizado 🧰
 - React-Three-Fiber
 - Shaders GLSL
 
-variant of project using face controls:
+variant of project using face controls! : face_controls branch
+
+the idea was copy this beautifull design made by gucci and super rare team :
+https://drive.google.com/file/d/17-m_WiYtYz1GQF5ntpEi4mGMeRcm6qMv/view
+
+my demo link : https://vercel.com/martinemanuelmaldonado93/nft-studio-challenge
+
 
 ## To run the project
  
