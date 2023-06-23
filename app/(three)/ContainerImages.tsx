@@ -23,8 +23,13 @@ import {
 } from "@react-three/postprocessing";
 import { generateRandomPositions } from "./(helpers)";
 
+const AMOUNT_PHOTOS = 20;
+
+const photos_jpg = artwork_data.filter((photo) => photo.image.endsWith(".jpg"));
+
 const randomPos = generateRandomPositions({
-	count: 20,
+	// count: photos_jpg.length,
+	count: AMOUNT_PHOTOS,
 	rangeX: 4.5,
 	rangeY: 1.5,
 	rangeZ: 6,
@@ -52,15 +57,13 @@ export default function ContainerImages() {
 	// 	})();
 	// }, [data]);
 
-	const featured = artwork_data.slice(0, 10);
+	// const featured = artwork_data.slice(0, AMOUNT_PHOTOS);
 	const groupRef = useRef<Group>(null!);
 	const scroll = useScroll();
 
 	useFrame((state, delta) => {
 		if (groupRef.current) {
 			const prev = groupRef.current.position.z;
-			// const zet = data.delta >0.
-			// console.log(data.delta.toFixed(2), "prev", prev);
 			groupRef.current.position.setZ(prev + scroll.delta);
 			if (prev > 5) {
 				groupRef.current.position.setZ(1);
@@ -70,14 +73,13 @@ export default function ContainerImages() {
 
 	return (
 		<group ref={groupRef}>
-			{randomPos.map((pos) => (
+			{randomPos.map((pos, i) => (
 				<PlaneImage
 					key={Math.random().toString()}
 					img_url="/nft.jpg"
 					pos={pos}
 				/>
 			))}
-			{/* <gridHelper /> */}
 		</group>
 	);
 }
