@@ -9,14 +9,14 @@
 	width: 100%;
 	padding: 0.5em 1.5em;
 	z-index: 3;
-	
+
 	&:hover::before {
 		transform: translateY(0);
 	}
 	&:hover div {
 		color: var(--primary);
 	}
-	&::before { 
+	&::before {
 		content: "";
 		display: block;
 		position: absolute;
@@ -32,14 +32,15 @@
 	&__menu {
 		display: flex;
 		gap: 0.5em;
-		
 		&_icon {
-			transition: all .1s;
+			cursor: pointer;
+			transition: all 0.4s;
 			&:hover {
-				scale: 1.1;
+				transform: rotateZ(90deg);
 			}
 		}
 		&_title {
+			font-weight: 700;
 			text-decoration: underline;
 		}
 	}
@@ -47,12 +48,92 @@
 		border: 1px solid var(--secondary);
 		border-radius: 3em;
 		padding: 0.2em 0.5em;
+		&:hover {
+			border-color: var(--primary);
+		}
 	}
 	&__logo_center {
-		
 	}
 
 	div {
 		margin-block: 1rem;
+	}
+}
+
+.modal {
+	position: absolute;
+	top: 6rem;
+	background-color: black;
+	padding: 1em;
+	border-radius: 2em;
+	color: white;
+
+	&__btn {
+		cursor: pointer;
+		display: flex;
+		justify-content: end;
+		width: 100%;
+		span {
+			font-size: x-large;
+			border: 1px solid var(--primary);
+			border-radius: 1em;
+			padding: .01em .6em;
+			transition: all .3s;
+		}
+		span:hover {
+			color: var(--secondary);
+			background-color: var(--primary);
+		}
+	}
+	&__ul {
+		li {
+			transition: background 0.4s;
+			padding: 0.5rem 1rem;
+			border-radius: .2em;
+		}
+		li:hover {
+			color: black;
+			background-color: hsl(0, 0%, 50%, 0.3);
+		}
+	}
+	&::before {
+		content: "";
+		display: block;
+		position: fixed;
+		top: 0;
+		transform: translateY(-1rem) translateX(-3rem);
+		height: 100vh;
+		width: 150vw;
+		backdrop-filter: grayscale(80%) blur(2px);
+		z-index: -1;
+	}
+	&__footer {
+		// div{
+		// 	display: inline;
+		// 	padding-block: .5rem;
+		// }
+		// div::before {
+		// 	content: "";
+		// 	display: block;
+		// 	// position: relative;
+		// 	height: 0.1rem;
+		// 	background-color: var(--primary);
+		// 	translate: 0 1.4rem;
+		// }
+		// div:hover::before {
+
+		// }
+	}
+}
+
+$colors: (red, blue, yellow, green, cyan); // Lista de colores primarios
+
+@for $i from 1 through length($colors) {
+	.modal {
+		&__ul {
+			li:nth-of-type(#{$i}):hover {
+				background-color: nth($colors, $i);
+			}
+		}
 	}
 }
